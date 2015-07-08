@@ -1,0 +1,29 @@
+{
+  "name": "memory-lock",
+  "version": "1.0.0",
+  "description": "A memory-base read-write lock for Node.js.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danielgindi/node-memory-lock"
+  },
+  "keywords": [
+    "node.js",
+    "memory",
+    "lock",
+    "mutex",
+    "semaphore",
+    "async"
+  ],
+  "author": "Daniel Cohen Gindi <danielgindi@gmail.com> (https://github.com/danielgindi)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danielgindi/node-memory-lock/issues"
+  },
+  "homepage": "https://github.com/danielgindi/node-memory-lock",
+  "dependencies": {
+  }
+}
