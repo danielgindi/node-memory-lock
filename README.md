@@ -17,17 +17,19 @@ Priority is one of `MemoryLock.Priority.UNSPECIFIED` *(default)*, `MemoryLock.Pr
 
 A locker's methods and properties are:
 
-  `readLock([timeout, ][callback]):boolean`: Acquire a read lock (*timeout* defaults to `-1`)
-  `writeUnlock([timeout, ][callback]):boolean`: Acquire a write lock (*timeout* defaults to `-1`)
-  `readUnlock():boolean`: Release a read lock
-  `writeUnlock():boolean`: Release a write lock
-  `upgradeToWriteLock():boolean`: Try to upgrade a read lock to a write lock. It take place immediately, and returns `true`/`false` as a success value.
-  `downgradeToReadLock():boolean`: Try to downgrade a write lock to a read lock. It take place immediately, and returns `true`/`false` as a success value.
-  `priority:MemoryLock.Priority`: Get/change the lock's priority at any time
-  `currentReadLocks:Number`: Get the number of current read locks
-  `hasWriteLock:Number`: Returns true if there's a write lock
-  `pendingReadLocks:Number`: Get the number of pending read locks
-  `pendingWriteLocks:Number`: Get the number of pending write locks
+Name | Explanation
+---- | ------------
+  `readLock([timeout, ][callback]):boolean` | Acquire a read lock (*timeout* defaults to `-1`)
+  `writeUnlock([timeout, ][callback]):boolean` | Acquire a write lock (*timeout* defaults to `-1`)
+  `readUnlock():boolean` | Release a read lock
+  `writeUnlock():boolean` | Release a write lock
+  `upgradeToWriteLock():boolean` | Try to upgrade a read lock to a write lock. It take place immediately, and returns `true`/`false` as a success value.
+  `downgradeToReadLock():boolean` | Try to downgrade a write lock to a read lock. It take place immediately, and returns `true`/`false` as a success value.
+  `priority:MemoryLock.Priority` | Get/set the lock's priority at any time
+  `currentReadLocks:Number` | Get the number of current read locks
+  `hasWriteLock:Number` | Returns true if there's a write lock
+  `pendingReadLocks:Number` | Get the number of pending read locks
+  `pendingWriteLocks:Number` | Get the number of pending write locks
 
 *How timeouts work on locks:*
 A negative timeout means "indefinitely".
@@ -50,7 +52,7 @@ async.series([
         .
         .
         function (callback) {
-            locker.writeUnlock(15000, callback);
+            locker.writeUnlock();
         }
     ],
     function finishLine (error) {
