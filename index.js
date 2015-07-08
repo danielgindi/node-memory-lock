@@ -1,7 +1,5 @@
 "use strict";
 
-var locks = {};
-
 /** @enum {string}
  */
 var Priority = {
@@ -40,6 +38,9 @@ var getValidPriority = function (priority) {
 
 };
 
+/**
+ * @class
+ */
 var MemoryLock = function ctor () {
     if (!(this instanceof ctor)) {
         var instance = Object.create(MemoryLock.prototype);
@@ -276,6 +277,7 @@ MemoryLock.prototype._acquireWaitingLock = function () {
 
 /**
  * Acquires a read lock.
+ * @public
  * @expose
  * If the lock could not be acquired after the timeout specified then it will fail and return 'timeout' in the callback error.
  * Argument combinations could be (timeout, callback), (timeout), or (callback) :
@@ -325,6 +327,7 @@ MemoryLock.prototype.readLock = function () {
  * Argument combinations could be (timeout, callback), (timeout), or (callback) :
  * -> (timeout) Timeout after which the lock fails. A negative value will wait indefinitely, zero will fail immediately. (Defaults to -1 - indefinite)
  * -> (callback) The callback to call when the lock is acquired or failed
+ * @public
  * @expose
  * @returns {boolean} Was the lock acquired. If there's a timeout, it might return false and later call the callback with a success.
  */
@@ -356,6 +359,7 @@ MemoryLock.prototype.writeLock = function () {
 
 /**
  * Releases a read lock
+ * @public
  * @expose
  * @returns {boolean} Was it unlocked successfully
  */
@@ -374,6 +378,7 @@ MemoryLock.prototype.readUnlock = function () {
 
 /**
  * Releases a write lock
+ * @public
  * @expose
  * @returns {boolean} Was it unlocked successfully
  */
@@ -397,6 +402,7 @@ MemoryLock.prototype.writeUnlock = function () {
  *   or if there is a write lock already - then it will fail immediately and return false.
  *   Otherwise it will succeed immediately and return true.
  *
+ * @public
  * @expose
  * @returns {boolean} Did the upgrade succeed?
  */
@@ -415,6 +421,7 @@ MemoryLock.prototype.upgradeToWriteLock = function () {
  *   If there is no write lock it will fail immediately and return false.
  *   Otherwise it will succeed immediately and return true.
  *
+ * @public
  * @expose
  * @returns {boolean} Did the downgrade succeed?
  */
@@ -433,85 +440,91 @@ MemoryLock.prototype.downgradeToReadLock = function () {
 
 /**
  * Gets or sets the priority for the locker
-
- @name MemoryLock.prototype#priority
- @type Priority
- @default Priority.UNSPECIFIED
+ *
+ * @name MemoryLock.prototype#priority
+ * @type Priority
+ * @default Priority.UNSPECIFIED
+ * @public
  */
-Object.defineProperty(MemoryLock.prototype, 'priority', {
-    get: function () { return this.__priority; },
-    set: function (newValue) {
-        newValue = getValidPriority(newValue);
 
-        var newHasSplitLists = newValue == Priority.READ || newValue == Priority.WRITE;
-        if (newHasSplitLists !== this.__hasSplitLists) {
-            this.__hasSplitLists = newHasSplitLists;
-            if (this.__waiters) {
-                this.__readWaiters = [];
-                this.__writeWaiters = [];
-                for (var i = 0, len = this.__waiters.length; i < len; i++) {
-                    var waiter = this.__waiters[i];
-                    if (waiter.w) {
-                        this.__readWaiters.push(waiter);
-                    } else {
-                        this.__writeWaiters.push(waiter);
-                    }
-                }
-                this.__waiters = null;
-            } else {
-                this.__waiters = this.__readWaiters.concat(this.__writeWaiters);
-                this.__waiters.sort(function (a, b) {
-                    if (a.t < b.t) return -1;
-                    if (a.t > b.t) return 1;
-                    return 0;
-                });
-                this.__readWaiters = this.__writeWaiters = null;
-            }
-        }
-    }
-});
+/**
+ * Retrieves the count of the read locks on the object.
+ *
+ * @name MemoryLock.prototype#currentReadLocks
+ * @type Number
+ * @public
+ */
+
+/**
+ * Returns true if the object is write-locked
+ *
+ * @name MemoryLock.prototype#hasWriteLock
+ * @type Boolean
+ * @public
+ */
+
+/**
+ * Retrieves the count of the pending read locks on the object.
+ *
+ * @name MemoryLock.prototype#pendingReadLocks
+ * @type Number
+ * @public
+ */
+
+/**
+ * Retrieves the count of the pending write locks on the object.
+ *
+ * @name MemoryLock.prototype#pendingWriteLocks
+ * @type Number
+ * @public
+ */
 
 Object.defineProperties(MemoryLock.prototype, {
 
-    /**
-     * Retrieves the count of the read locks on the object.
+    'priority': {
+        get: function () { return this.__priority; },
+        set: function (newValue) {
+            newValue = getValidPriority(newValue);
 
-     @name MemoryLock.prototype#currentReadLocks
-     @type Number
-     */
+            var newHasSplitLists = newValue == Priority.READ || newValue == Priority.WRITE;
+            if (newHasSplitLists !== this.__hasSplitLists) {
+                this.__hasSplitLists = newHasSplitLists;
+                if (this.__waiters) {
+                    this.__readWaiters = [];
+                    this.__writeWaiters = [];
+                    for (var i = 0, len = this.__waiters.length; i < len; i++) {
+                        var waiter = this.__waiters[i];
+                        if (waiter.w) {
+                            this.__readWaiters.push(waiter);
+                        } else {
+                            this.__writeWaiters.push(waiter);
+                        }
+                    }
+                    this.__waiters = null;
+                } else {
+                    this.__waiters = this.__readWaiters.concat(this.__writeWaiters);
+                    this.__waiters.sort(function (a, b) {
+                        if (a.t < b.t) return -1;
+                        if (a.t > b.t) return 1;
+                        return 0;
+                    });
+                    this.__readWaiters = this.__writeWaiters = null;
+                }
+            }
+        }
+    },
 
     'currentReadLocks': {
         get: function () { return this.__readLocks; }
     },
 
-    /**
-     * Returns true if the object is write-locked
-
-     @name MemoryLock.prototype#hasWriteLock
-     @type Boolean
-     */
-
     'hasWriteLock': {
         get: function () { return this.__hasWriteLock; }
     },
 
-    /**
-     * Retrieves the count of the pending read locks on the object.
-
-     @name MemoryLock.prototype#pendingReadLocks
-     @type Number
-     */
-
     'pendingReadLocks': {
         get: function () { return this.__waitingRead; }
     },
-
-    /**
-     * Retrieves the count of the pending write locks on the object.
-
-     @name MemoryLock.prototype#pendingWriteLocks
-     @type Number
-     */
 
     'pendingWriteLocks': {
         get: function () { return this.__waitingWrite; }
@@ -519,25 +532,29 @@ Object.defineProperties(MemoryLock.prototype, {
 });
 
 /**
+ *
+ * @type {Object.<string, MemoryLock>}
+ */
+var locks = {};
+
+/**
+ * @expose
  * @public
  * @param {Object?} options
  * @param {String?} options.name The unique name for the lock
  * @param {Priority?} options.priority Priority policy, enum available in MemoryLock.Priority (UNSPECIFIED, READ, WRITE)
  * @returns {MemoryLock} The locker object
  */
-var lockFactory = function (options) {
-    return (options && options.name) ?
-        locks[options.name] || (locks[options.name] = new MemoryLock(options.priority)) :
-        new MemoryLock(options);
+module.exports = function (options) {
+    if (options && options.name) {
+        return locks[options.name] || (locks[options.name] = new MemoryLock(options));
+    } else {
+        return new MemoryLock(options);
+    }
 };
 
-/**
- * @expose
- * */
-module.exports = lockFactory;
-
 /** @expose */
-module.Priority = Priority;
+module.exports.Priority = Priority;
 
 /** @expose */
 MemoryLock.Priority = Priority;
