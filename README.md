@@ -1,4 +1,4 @@
-# node-memory-lock
+# memory-lock
 
 [![npm Version](https://badge.fury.io/js/memory-lock.png)](https://npmjs.org/package/memory-lock)
 
