@@ -23,8 +23,8 @@ Name | Explanation
   `writeUnlock([timeout, ][callback]):boolean` | Acquire a write lock (*timeout* defaults to `-1`)
   `readUnlock():boolean` | Release a read lock
   `writeUnlock():boolean` | Release a write lock
-  `upgradeToWriteLock():boolean` | Try to upgrade a read lock to a write lock. It take place immediately, and returns `true`/`false` as a success value.
-  `downgradeToReadLock():boolean` | Try to downgrade a write lock to a read lock. It take place immediately, and returns `true`/`false` as a success value.
+  `upgradeToWriteLock():boolean` | Try to upgrade a read lock to a write lock. It takes place immediately, and returns `true`/`false` as a success value.
+  `downgradeToReadLock():boolean` | Try to downgrade a write lock to a read lock. It takes place immediately, and returns `true`/`false` as a success value.
   `priority:MemoryLock.Priority` | Get/set the lock's priority at any time
   `currentReadLocks:Number` | Get the number of current read locks
   `hasWriteLock:Number` | Returns true if there's a write lock
@@ -65,7 +65,7 @@ async.series([
 
 ## Contributing
 
-If you have anything to contribute, or functionality that you luck - you are more than welcome to participate in this!
+If you have anything to contribute, or functionality that you lack - you are more than welcome to participate in this!
 If anyone wishes to contribute unit tests - that also would be great :-)
 
 ## Me
