@@ -6,6 +6,8 @@ A memory-base read-write lock for Node.js.
 
 **Note**: Contrary to other lockers available for Node.js, this one is memory-based, meaning that it will not work across separate processes.
 
+As with everything else in node, these locks are also async! Meaning you get a callback when the lock is obtained etc. It can be easily integrated into an `async` chain with the callback, to make sure that a certain flow is "synchronized".
+
 Sometimes, with all of those callbacks and having multiple users working simultaneously, we might need a lock, to make sure that a certain flow will run once at a time. Or maybe something more fine tuned like reader-writer lock.
 
 Assuming you called `var MemoryLock = require('memory-lock');`,
@@ -52,10 +54,16 @@ async.series([
         .
         .
         function (callback) {
-            locker.writeUnlock();
+            ...
+            // We may not want to unlock here, as it could be skipped if there was an error in the async chain
+            // locker.writeUnlock();
+            ...
         }
     ],
     function finishLine (error) {
+        ...
+        // Make sure to unlock even if there was an error in the async chain
+        locker.writeUnlock();
         ...
     }
 );
