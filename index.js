@@ -116,7 +116,6 @@ MemoryLock.prototype._handleNoLock = function (timeout, callback, isWrite) {
         var waiter = { cb: callback, w: isWrite, t: Date.now() };
 
         // Add this lock to the waiting list
-
         that._getWaiterList(isWrite).push(waiter);
 
         if (isWrite) {
@@ -131,7 +130,9 @@ MemoryLock.prototype._handleNoLock = function (timeout, callback, isWrite) {
             waiter.to = setTimeout(function() {
 
                 // Remove it from the waiter list
-                that._getWaiterList(isWrite).remove(waiter);
+                var waiters = that._getWaiterList(isWrite);
+                var idx = waiters.indexOf(waiter);
+                if (idx !== -1) waiters.splice(idx, 1); 
 
                 if (isWrite) {
                     that.__waitingWrite--;
