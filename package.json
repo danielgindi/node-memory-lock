@@ -1,6 +1,6 @@
 {
   "name": "memory-lock",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A memory-base read-write lock for Node.js.",
   "main": "index.js",
   "scripts": {
