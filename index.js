@@ -132,8 +132,11 @@ MemoryLock.prototype._handleNoLock = function (timeout, callback, isWrite) {
                 // Remove it from the waiter list
                 var waiters = that._getWaiterList(isWrite);
                 var idx = waiters.indexOf(waiter);
-                if (idx !== -1) waiters.splice(idx, 1); 
+                if (idx !== -1) {
+                    waiters.splice(idx, 1); 
+                }
 
+                // Decrement waiting counter
                 if (isWrite) {
                     that.__waitingWrite--;
                 } else {
