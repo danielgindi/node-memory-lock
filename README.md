@@ -2,7 +2,7 @@
 
 [![npm Version](https://badge.fury.io/js/memory-lock.png)](https://npmjs.org/package/memory-lock)
 
-A memory-base read-write lock for Node.js.
+A memory-based read-write lock for Node.js.
 
 **Note**: Contrary to other lockers available for Node.js, this one is memory-based, meaning that it will not work across separate processes.
 
